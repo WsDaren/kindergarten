@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jckj.mapper.UserMapper">
+		
+	<!-- 列表 -->
+	<select id="findAll" parameterType="int" resultType="com.jckj.model.User">
+		select
+		user_id uid,user_name uname,user_portrait uportrait,user_phone uphone,is_delete isDelete,FROM_UNIXTIME(create_time/1000,'%Y-%m-%d %T') as createTimestr,FROM_UNIXTIME(update_time/1000,'%Y-%m-%d %T') as updateTimestr,guardian_id guardianId
+		from t_user_info
+		where is_delete=0
+		limit #{page},#{limit}
+	</select>
+	
+	<!-- 总数 -->
+	<select id="count" resultType="int">
+		select 
+		count(1)
+		from t_user_info
+	</select>	
+	
+	<!-- 详情 -->
+	<select id="info" resultType="com.jckj.model.User">
+		select
+		user_id,user_name,user_portrait,user_phone,is_delete,create_time,update_time,guardian_id
+		from t_user_info
+		where user_id=#{user_id}
+	</select>
+	
+	<!-- 新增 -->
+	<insert id="add" parameterType="com.jckj.model.User" useGeneratedKeys="true" keyProperty="user_id">
+		insert into t_user_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name !=null">name,</if>
+			<if test="createTime !=null">create_time,</if>
+			<if test="updateTime !=null">update_time,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name !=null">#{name},</if>
+			<if test="createTime !=null">#{createTime},</if>
+			<if test="updateTime !=null">#{updateTime},</if>
+		</trim>
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="com.jckj.model.User">
+		update t_user_info
+		<trim prefix="set " suffixOverrides=",">
+			<if test="name !=null">name=#{name},</if>
+			<if test="createTime !=null">create_time=#{createTime},</if>
+			<if test="updateTime !=null">update_time=#{updateTime},</if>
+		</trim>
+		where user_id=#{user_id}
+	</update>
+	
+	<!-- 删除 -->
+	<update id="remove">
+		update t_user_info set is_delete=1
+		where user_id=#{user_id}
+	</update>
+</mapper>
